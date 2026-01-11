@@ -1,0 +1,21 @@
+/**
+ * The following styles get applied inside the editor only.
+ *
+ * Replace them with your own styles or remove the file completely.
+ */
+
+.wp-block-soli-mega-panel {
+	border: 1px dotted #f00;
+}
+
+/* Make mega submenu items visually identifiable in editor */
+.wp-block-navigation-item.is-soli-mega-panel {
+	outline: 1px dashed rgba(0, 0, 0, 0.25);
+	outline-offset: 4px;
+	border-radius: 8px;
+}
+
+/* Slightly improve editing comfort for the inner panel blocks */
+.wp-block-navigation-item.is-soli-mega-panel .soli-mega-panel__inner {
+	padding: 0.5rem;
+}

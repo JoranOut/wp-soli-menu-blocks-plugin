@@ -1,0 +1,21 @@
+{
+  "name": "menu-blocks",
+  "version": "1.0.0",
+  "description": "",
+  "main": "test.js",
+  "scripts": {
+    "start": "wp-scripts start --blocks-manifest",
+    "build": "wp-scripts build --blocks-manifest",
+    "wp-env": "wp-env start --debug",
+    "publish": "npm run build && node ./publish.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@wordpress/env": "latest",
+    "@wordpress/scripts": "latest",
+    "archiver": "^7.0.1",
+    "express": "^4.19.2"
+  }
+}
