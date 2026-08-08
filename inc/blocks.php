@@ -69,3 +69,12 @@ add_filter('render_block', function ($block_content, $block) {
     return $block_content;
 
 }, 10, 2);
+
+// Allow image-login block inside the Navigation block inserter.
+add_filter( 'block_type_metadata', function ( $metadata ) {
+    if ( isset( $metadata['name'] ) && 'core/navigation' === $metadata['name'] ) {
+        $metadata['allowedBlocks'] = $metadata['allowedBlocks'] ?? array();
+        $metadata['allowedBlocks'][] = 'soli/image-login';
+    }
+    return $metadata;
+} );

@@ -7,7 +7,6 @@
   "category": "design",
   "icon": "migrate",
   "description": "Image above a login/log-out block, optionally hidden on mobile.",
-  "parent": ["core/navigation"],
   "example": {},
 	"supports": {
 		"html": false
