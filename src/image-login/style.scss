@@ -1,0 +1,37 @@
+/**
+ * The following styles get applied both on the front of your site
+ * and in the editor.
+ */
+
+.wp-block-soli-image-login {
+  display: block;
+
+  .wp-block-image {
+    display: flex;
+    justify-content: center;
+    margin: 0;
+  }
+
+  &:not(.is-hidden-image) .wp-block-loginout a {
+    font-size: 12px;
+  }
+
+  &.is-hidden-image {
+    .wp-block-image {
+      display: none;
+    }
+  }
+
+  &.is-hidden-mobile {
+    @media (max-width: 600px) {
+      display: none !important;
+    }
+  }
+
+  &.is-hidden-desktop {
+    @media (min-width: 600px) {
+      display: none !important;
+    }
+  }
+}
+

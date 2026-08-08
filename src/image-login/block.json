@@ -1,0 +1,33 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "soli/image-login",
+  "version": "0.1.0",
+  "title": "Image Login",
+  "category": "design",
+  "icon": "migrate",
+  "description": "Image above a login/log-out block, optionally hidden on mobile.",
+  "example": {},
+	"supports": {
+		"html": false
+	},
+    "attributes": {
+      "hideOnMobile": {
+        "type": "boolean",
+        "default": false
+      },
+      "hideOnDesktop": {
+        "type": "boolean",
+        "default": false
+      },
+      "hideImage": {
+        "type": "boolean",
+        "default": false
+      }
+    },
+	"textdomain": "soli",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+    "viewScript": "file:./view.js"
+}

@@ -1,0 +1,88 @@
+/**
+ * The following styles get applied both on the front of your site
+ * and in the editor.
+ *
+ * Replace them with your own styles or remove the file completely.
+ */
+
+/**
+ * Soli Mega Panel – full-width submenu (core/navigation-submenu variation)
+ */
+
+:root {
+	/* Scrollbar compensation: prevents horizontal overflow caused by 100vw including scrollbar. */
+	--soli-scrollbar-width: calc(100vw - 100%);
+
+	/* Default offset: admin bar height only. Override this on your header wrapper if needed. */
+	--soli-header-offset: var(--wp-admin--admin-bar--height, 0px);
+}
+
+/* The submenu item itself */
+.wp-block-navigation-item.is-soli-mega-panel.is-soli-mega-panel {
+  position: static;
+  cursor: pointer;
+}
+
+//block-editor-block-list__block wp-block is-selected is-soli-mega-panel wp-block-navigation-item is-editing has-child wp-block-navigation-submenu
+//  wp-block-navigation__submenu-container block-editor-block-list__layout
+//    block-editor-block-list__block wp-block soli-mega-panel__content wp-block-group block-editor-block-list__layout is-layout-constrained wp-block-group-is-layout-constrained has-global-padding
+
+/* The dropdown panel container (this is your <ul>) */
+.wp-block-navigation .has-child.has-child.is-soli-mega-panel.is-soli-mega-panel > .wp-block-navigation__submenu-container {
+    position: absolute;
+    cursor: auto;
+
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+
+    padding: 1.5rem 0;
+    margin: 0;
+
+    background: transparent !important;
+    border: none;
+    z-index: 9999;
+    border-radius: 0;
+    box-sizing: border-box;
+
+    /* Reset submenu list styling */
+    list-style: none;
+
+    /* The submenu container is a UL: ensure it behaves as a panel */
+    display: block;
+
+    .soli-mega-panel__content{
+      background: white;
+      border-top: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.14);
+      padding: 2.5rem 0 2rem;
+    }
+}
+
+header:has(.wp-block-navigation-item.is-soli-mega-panel) {
+  display: block;
+  position: sticky;
+  top: var(--soli-header-offset, 0);
+  background: #ffffff;
+  z-index: 99;
+}
+
+@media (max-width: 600px) {
+  .wp-block-navigation .has-child.has-child.is-soli-mega-panel.is-soli-mega-panel > .wp-block-navigation__submenu-container {
+    display: none !important;
+  }
+}
+
+
+.wp-block-navigation-item.is-soli-mega-panel.is-soli-mega-panel:hover {
+  > .wp-block-navigation-item__content {
+    position: relative;
+  }
+}
+.wp-block-navigation .is-soli-mega-panel.has-child.has-child-selected>.wp-block-navigation__submenu-container,
+.wp-block-navigation .is-soli-mega-panel.has-child.is-selected>.wp-block-navigation__submenu-container,
+.wp-block-navigation .is-soli-mega-panel.has-child.is-selected > .wp-block-navigation__submenu-container,
+.wp-block-navigation-submenu.is-soli-mega-panel.has-child-selected>.wp-block-navigation__submenu-container,
+.wp-block-navigation-submenu.is-soli-mega-panel.is-selected>.wp-block-navigation__submenu-container {
+  width: 100vw !important;
+}

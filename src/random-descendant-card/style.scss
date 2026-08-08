@@ -1,0 +1,58 @@
+/**
+ * The following styles get applied both on the front of your site
+ * and in the editor.
+ *
+ * Replace them with your own styles or remove the file completely.
+ */
+
+.wp-block-soli-random-descendant-card {
+	background-color: #21759b;
+	color: #fff;
+    position: relative;
+    overflow: hidden;
+    margin: 20px 0;
+    padding: 0;
+    height: 140px;
+    width: 220px;
+    border-radius: 5px;
+    cursor: pointer;
+
+    .soli-random-descendant-card__media img {
+        display: block;
+        object-fit: fill;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+    }
+
+    &:hover .soli-random-descendant-card__media img {
+      transform: scale(1.05);
+      transition: transform 0.5s ease;
+    }
+
+    .soli-random-descendant-card__title {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      margin: 0;
+      padding: 0 0 10px 15px;
+      background-image: linear-gradient(0, rgba(0, 0, 0, 0.6196078431), transparent);
+      width: auto;
+      z-index: 3;
+      font-size: 20px;
+      text-wrap: wrap;
+      text-shadow: 0 0 6px black;
+    }
+
+    &:after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 2;
+        background-image: linear-gradient(-135deg, rgba(170, 42, 42, .2) 0%, rgba(75, 33, 191, .2) 100%);
+    }
+}

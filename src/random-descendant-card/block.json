@@ -1,0 +1,25 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "soli/random-descendant-card",
+	"version": "0.1.0",
+	"title": "Random Descendant Card",
+	"category": "widgets",
+	"icon": "randomize",
+    "description": "Shows a random descendant page (title + featured image) from a selected parent page.",
+	"example": {},
+	"supports": {
+		"html": false
+	},
+    "attributes": {
+      "parentId": {
+        "type": "integer",
+        "default": 0
+      }
+    },
+	"textdomain": "soli",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"render": "file:./render.php"
+}
