@@ -11,14 +11,14 @@ files.forEach(file => {
     }
 });
 
-// Step 2a: Read the readme.md file
-const readmeContent = fs.readFileSync(path.join(__dirname, 'readme.md'), 'utf8');
+// Step 2a: Read the README.md file
+const readmeContent = fs.readFileSync(path.join(__dirname, 'README.md'), 'utf8');
 
-// Step 2b: Extract Plugin Name and Current Version using regex
+// Step 2b: Extract Plugin Name using regex
 const pluginNameMatch = readmeContent.match(/~Plugin Name:\s*(.+?)~/);
 
 if (!pluginNameMatch) {
-    throw new Error('Could not find Plugin Name or Current Version in readme.md');
+    throw new Error('Could not find Plugin Name in README.md');
 }
 
 const pluginName = pluginNameMatch[1].trim();
@@ -61,6 +61,7 @@ archive.pipe(output);
 archive.glob('**/*', {
     cwd: __dirname,
     ignore: [
+        'node_modules',
         'node_modules/**',
         '**/node_modules/**',
         'package.json',
