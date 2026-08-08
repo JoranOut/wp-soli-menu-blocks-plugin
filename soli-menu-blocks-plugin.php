@@ -9,7 +9,7 @@ namespace Soli\MenuBlocks;
 */
 
 require_once 'updater.php';
-require_once 'src/blocks.php';
+require_once 'inc/blocks.php';
 
 if (!defined('ABSPATH')) exit; // Exit if accessed directly
 define('SOLI_MENU_BLOCKS__PLUGIN_DIR_PATH', plugin_dir_path(__FILE__));
