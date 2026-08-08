@@ -74,6 +74,12 @@ archive.glob('**/*', {
         '.gitignore',
         '*.zip',
         'publish.js',
+        // Tests and their artifacts are not part of the distributed plugin.
+        'e2e/**',
+        'playwright.config.js',
+        'playwright-report/**',
+        'test-results/**',
+        'artifacts/**',
     ]
 });
 

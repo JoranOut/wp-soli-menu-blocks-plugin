@@ -7,12 +7,18 @@
     "start": "wp-scripts start --blocks-manifest",
     "build": "wp-scripts build --blocks-manifest",
     "wp-env": "wp-env start --debug",
+    "env:start": "wp-env start",
+    "env:stop": "wp-env stop",
+    "env:reset": "wp-env clean all && wp-env start",
+    "test:e2e": "wp-scripts test-playwright",
+    "test:e2e:ui": "wp-scripts test-playwright --ui",
     "publish": "npm run build && node ./publish.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@playwright/test": "^1.57.0",
     "@wordpress/env": "latest",
     "@wordpress/scripts": "latest",
     "archiver": "^7.0.1",
