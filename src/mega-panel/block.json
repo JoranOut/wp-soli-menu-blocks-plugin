@@ -8,5 +8,6 @@
 	"description": "A menu item that reveals a large panel containing inner blocks (e.g., columns).",
 	"textdomain": "soli",
 	"editorScript": "file:./index.js",
+	"viewScript": "file:./view.js",
 	"style": "file:./style-index.css"
 }
