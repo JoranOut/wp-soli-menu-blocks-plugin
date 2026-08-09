@@ -5,31 +5,8 @@
 	"version": "0.1.0",
 	"title": "Mega Panel",
 	"category": "design",
-	"icon": "table-row-after",
 	"description": "A menu item that reveals a large panel containing inner blocks (e.g., columns).",
-	"parent": ["core/navigation"],
-	"example": {},
-	"supports": {
-		"html": false,
-		"anchor": false,
-		"spacing": {
-			"margin": true,
-			"padding": true
-		}
-	},
-	"attributes": {
-		"label": {
-			"type": "string",
-			"default": "Submenu"
-		},
-		"openOnHover": {
-			"type": "boolean",
-			"default": true
-		}
-	},
 	"textdomain": "soli",
 	"editorScript": "file:./index.js",
-	"editorStyle": "file:./index.css",
-	"style": "file:./style-index.css",
-	"viewScript": "file:./view.js"
+	"style": "file:./style-index.css"
 }

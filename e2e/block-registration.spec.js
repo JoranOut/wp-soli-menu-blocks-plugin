@@ -5,10 +5,13 @@
  *   stale build directory.
  * - JavaScript, via build/<block>/index.js. Broken by an unregistered or
  *   renamed block in src/.
+ *
+ * The mega panel is the exception: it is a variation of core/navigation-submenu
+ * and so must be registered on neither side as a block type.
  */
 
 const { test, expect } = require('@playwright/test');
-const { BLOCKS, EDITOR_BLOCKS, loginAsAdmin, openBlockEditor } = require('./helpers');
+const { BLOCKS, MEGA_PANEL, loginAsAdmin, openBlockEditor } = require('./helpers');
 
 test.describe('Block registration', () => {
 	test.beforeEach(async ({ page }) => {
@@ -30,14 +33,14 @@ test.describe('Block registration', () => {
 		}
 	});
 
-	test('all editor blocks are registered in the editor', async ({ page }) => {
+	test('all blocks are registered in the editor', async ({ page }) => {
 		await openBlockEditor(page);
 
 		const names = await page.evaluate(() =>
 			window.wp.blocks.getBlockTypes().map((type) => type.name)
 		);
 
-		for (const block of EDITOR_BLOCKS) {
+		for (const block of BLOCKS) {
 			expect(names, `${block.name} is not registered in the editor`).toContain(block.name);
 		}
 	});
@@ -60,31 +63,71 @@ test.describe('Block registration', () => {
 	test('the mega panel is a navigation submenu variation', async ({ page }) => {
 		await openBlockEditor(page);
 
-		const variation = await page.evaluate(() =>
-			window.wp.blocks
-				.getBlockVariations('core/navigation-submenu')
-				.find((candidate) => candidate.name === 'soli/mega-panel')
+		const variation = await page.evaluate(
+			({ parentBlock, name }) =>
+				window.wp.blocks
+					.getBlockVariations(parentBlock)
+					.find((candidate) => candidate.name === name),
+			MEGA_PANEL
 		);
 
-		expect(variation, 'soli/mega-panel is not registered on core/navigation-submenu').toBeTruthy();
-		expect(variation.title).toBe('Mega Panel');
+		// A variation has no block type to carry block.json's editorScript, so
+		// inc/blocks.php enqueues build/mega-panel/index.js by hand. Drop that
+		// enqueue and the variation disappears here.
+		expect(
+			variation,
+			`${MEGA_PANEL.name} is not registered on ${MEGA_PANEL.parentBlock}`
+		).toBeTruthy();
+		expect(variation.title).toBe(MEGA_PANEL.title);
 		expect(variation.scope).toContain('inserter');
 		// The variation tags itself with this class; inc/blocks.php keys its
 		// front-end stylesheet off the very same class.
-		expect(variation.attributes.className).toBe('is-soli-mega-panel');
+		expect(variation.attributes.className).toBe(MEGA_PANEL.className);
 	});
 
-	test('the mega panel block type is restricted to the navigation block', async ({ page }) => {
+	test('the mega panel is registered as a variation only, never as a block type', async ({
+		page,
+	}) => {
+		// The mega panel used to be registered twice: as a variation in the editor
+		// and, because build/blocks-manifest.php lists it, as a block type in PHP.
+		// That second registration is unusable by design -- no editor code can
+		// create a block type the editor does not know -- so inc/blocks.php now
+		// skips it. Registering it in PHP again must fail this test.
 		await page.goto('/wp-admin/');
 
-		const parent = await page.evaluate(async () => {
-			const blockType = await window.wp.apiFetch({
-				path: '/wp/v2/block-types/soli/mega-panel',
-			});
-			return blockType.parent;
-		});
+		const serverSide = await page.evaluate(() =>
+			window.wp
+				.apiFetch({ path: '/wp/v2/block-types' })
+				.then((types) => types.map((type) => type.name))
+		);
 
-		expect(parent).toEqual(['core/navigation']);
+		// Sanity check: this endpoint really does list the plugin's own blocks, so a
+		// missing mega panel below means absence and not an empty response.
+		expect(serverSide).toContain('soli/menu-link');
+		expect(
+			serverSide,
+			`${MEGA_PANEL.name} is registered server-side but has no editor counterpart`
+		).not.toContain(MEGA_PANEL.name);
+
+		await openBlockEditor(page);
+
+		const editorSide = await page.evaluate((name) => {
+			const created = window.wp.blocks.createBlock(name);
+
+			return {
+				blockType: window.wp.blocks.getBlockType(name) || null,
+				createdName: created.name,
+				serialized: window.wp.blocks.serialize([created]),
+			};
+		}, MEGA_PANEL.name);
+
+		// This is what made the server-side block type useless, and why it had to go
+		// rather than the variation: asking the editor for the name yields nothing, so
+		// createBlock() degrades to the "missing block" placeholder and serializes to
+		// an empty string. No amount of PHP registration can make it insertable.
+		expect(editorSide.blockType).toBeNull();
+		expect(editorSide.createdName).toBe('core/missing');
+		expect(editorSide.serialized).toBe('');
 	});
 
 	test('menu link and random descendant card are server-rendered', async ({ page }) => {

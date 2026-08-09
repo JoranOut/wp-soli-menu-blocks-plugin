@@ -10,7 +10,7 @@ Plugin for wordpress dedicated to displaying an mega menu via blocks on [soli.nl
 ~Current Version: 1.0.2~
 
 Contains:
-- a mega-panel block
+- a mega-panel variation of the core navigation submenu
 - a submenu-item block for flat menu items
 - a random page picker block to select random pages
 

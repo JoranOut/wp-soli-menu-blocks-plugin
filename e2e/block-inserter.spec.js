@@ -5,7 +5,7 @@
 
 const { test, expect } = require('@playwright/test');
 const {
-	TOP_LEVEL_BLOCKS,
+	BLOCKS,
 	loginAsAdmin,
 	openBlockEditor,
 	searchInserter,
@@ -18,7 +18,7 @@ test.describe('Block inserter', () => {
 		await openBlockEditor(page);
 	});
 
-	for (const block of TOP_LEVEL_BLOCKS) {
+	for (const block of BLOCKS) {
 		test(`offers "${block.title}" in the inserter`, async ({ page }) => {
 			await searchInserter(page, block.title);
 

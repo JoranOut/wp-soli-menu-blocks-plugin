@@ -9,7 +9,7 @@
 
 const { test, expect } = require('@playwright/test');
 const {
-	EDITOR_BLOCKS,
+	BLOCKS,
 	loginAsAdmin,
 	openBlockEditor,
 	searchInserter,
@@ -83,7 +83,7 @@ test.describe('Block save validation', () => {
 		await expect(page.getByText('unexpected or invalid content')).toHaveCount(0);
 	});
 
-	for (const block of EDITOR_BLOCKS) {
+	for (const block of BLOCKS) {
 		test(`${block.name} serializes and reparses without becoming invalid`, async ({ page }) => {
 			await openBlockEditor(page);
 
