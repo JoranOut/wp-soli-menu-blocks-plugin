@@ -27,7 +27,10 @@
 //  wp-block-navigation__submenu-container block-editor-block-list__layout
 //    block-editor-block-list__block wp-block soli-mega-panel__content wp-block-group block-editor-block-list__layout is-layout-constrained wp-block-group-is-layout-constrained has-global-padding
 
-/* The dropdown panel container (this is your <ul>) */
+/* The dropdown panel container (this is your <ul>).
+   This is the fallback used in the editor and before view.js has measured:
+   100vw centred on the item. view.js replaces it with fixed positioning on the
+   front end — see the `.is-soli-mega-panel-positioned` rule below. */
 .wp-block-navigation .has-child.has-child.is-soli-mega-panel.is-soli-mega-panel > .wp-block-navigation__submenu-container {
     position: absolute;
     cursor: auto;
@@ -57,6 +60,28 @@
       box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.14);
       padding: 2.5rem 0 2rem;
     }
+}
+
+/* Front-end placement, driven by the measurements view.js writes onto the panel.
+   `position: fixed` sidesteps the containing block entirely, so left/right can
+   simply be 0 — no 100vw, no scrollbar compensation, no clipping ancestors.
+   The class is only present once JS has measured, so the fallback above stays
+   in charge in the editor. */
+@media (min-width: 601px) {
+  .wp-block-navigation .has-child.has-child.is-soli-mega-panel.is-soli-mega-panel > .wp-block-navigation__submenu-container.is-soli-mega-panel-positioned {
+    position: fixed;
+    top: var(--soli-mega-panel-top, 100%);
+    left: 0;
+    right: 0;
+    width: auto;
+    min-width: 0;
+    max-width: none;
+    transform: none;
+
+    /* Transparent bridge from the menu item down to the header edge; keeps the
+       pointer inside the <li> so :hover survives the trip into the panel. */
+    padding: var(--soli-mega-panel-bridge, 0px) 0 0;
+  }
 }
 
 header:has(.wp-block-navigation-item.is-soli-mega-panel) {

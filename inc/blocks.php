@@ -89,6 +89,35 @@ function soli_menu_blocks_enqueue_mega_panel_style() {
 }
 
 /**
+ * Enqueues the front-end script that positions the mega panel.
+ *
+ * CSS alone can only place the panel relative to its navigation item, so the
+ * measuring happens in JavaScript. The editor deliberately does not load this:
+ * there the panel sits inside the canvas iframe, where viewport coordinates mean
+ * something different, and the CSS fallback is the better approximation.
+ */
+function soli_menu_blocks_enqueue_mega_panel_view_script() {
+    $asset_file = SOLI_MENU_BLOCKS__PLUGIN_DIR_PATH . 'build/mega-panel/view.asset.php';
+
+    if ( ! file_exists( $asset_file ) ) {
+        return;
+    }
+
+    $asset = require $asset_file;
+
+    wp_enqueue_script(
+        'soli-mega-panel-view',
+        SOLI_MENU_BLOCKS__PLUGIN_DIR_URL . 'build/mega-panel/view.js',
+        $asset['dependencies'],
+        $asset['version'],
+        array(
+            'in_footer' => true,
+            'strategy'  => 'defer',
+        )
+    );
+}
+
+/**
  * Loads the mega panel variation in the editor.
  *
  * A block variation has no block type of its own, so nothing enqueues its script
@@ -116,9 +145,9 @@ add_action( 'enqueue_block_editor_assets', function() {
     soli_menu_blocks_enqueue_mega_panel_style();
 });
 
-// Enqueue front-end CSS for the submenu panel variation. As it is a variation of
-// core/navigation-submenu the CSS needs to be enqueued manually: a variation
-// cannot declare its own styles in block.json.
+// Enqueue the front-end assets for the submenu panel variation. As it is a
+// variation of core/navigation-submenu they need to be enqueued manually: a
+// variation cannot declare its own styles or scripts in block.json.
 add_filter('render_block', function ($block_content, $block) {
 
     if (empty($block['blockName']) || 'core/navigation-submenu' !== $block['blockName']) {
@@ -131,6 +160,7 @@ add_filter('render_block', function ($block_content, $block) {
     }
 
     soli_menu_blocks_enqueue_mega_panel_style();
+    soli_menu_blocks_enqueue_mega_panel_view_script();
 
     return $block_content;
 

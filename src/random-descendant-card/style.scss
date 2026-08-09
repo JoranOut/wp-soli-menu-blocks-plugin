@@ -17,17 +17,33 @@
     border-radius: 5px;
     cursor: pointer;
 
+    /* The link wraps both media and title, so it has to fill the card itself,
+       otherwise the absolutely positioned media has nothing to size against. */
+    .soli-random-descendant-card__link {
+        display: block;
+        position: absolute;
+        inset: 0;
+    }
+
+    .soli-random-descendant-card__media {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        z-index: 1;
+    }
+
     .soli-random-descendant-card__media img {
         display: block;
-        object-fit: fill;
-        z-index: 1;
         width: 100%;
         height: 100%;
+        max-width: none;
+        object-fit: cover;
+        object-position: center;
+        transition: transform 0.5s ease;
     }
 
     &:hover .soli-random-descendant-card__media img {
       transform: scale(1.05);
-      transition: transform 0.5s ease;
     }
 
     .soli-random-descendant-card__title {
