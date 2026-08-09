@@ -5,25 +5,35 @@
 const { expect } = require('@playwright/test');
 
 /**
- * Every block type this plugin registers in PHP, with the title shown in the editor.
+ * Every block type this plugin registers, with the title shown in the editor.
  *
- * Note that soli/mega-panel is the odd one out: PHP registers it as a block type
- * from build/blocks-manifest.php, but the editor side registers it as a *variation*
- * of core/navigation-submenu (see src/mega-panel/index.js), so it is not a
- * JavaScript block type and cannot be created with createBlock().
+ * Each of these is registered on both sides -- in PHP from
+ * build/blocks-manifest.php and in the editor from build/<block>/index.js -- and
+ * each is insertable straight into a post.
+ *
+ * soli/mega-panel is deliberately absent: it is a *variation* of
+ * core/navigation-submenu (src/mega-panel/index.js), so it has no block type on
+ * either side. See MEGA_PANEL below.
  */
 const BLOCKS = [
 	{ name: 'soli/image-login', title: 'Image Login' },
-	{ name: 'soli/mega-panel', title: 'Mega Panel' },
 	{ name: 'soli/menu-link', title: 'Menu Link' },
 	{ name: 'soli/random-descendant-card', title: 'Random Descendant Card' },
 ];
 
-/** Blocks registered as real block types in the editor. */
-const EDITOR_BLOCKS = BLOCKS.filter((block) => block.name !== 'soli/mega-panel');
-
-/** Blocks an author can insert straight into a post. */
-const TOP_LEVEL_BLOCKS = EDITOR_BLOCKS;
+/**
+ * The mega panel, which is a block variation rather than a block type.
+ *
+ * `className` is the contract between src/mega-panel/index.js, which stamps it on
+ * every panel, and inc/blocks.php, which enqueues the panel stylesheet only for
+ * submenus carrying it.
+ */
+const MEGA_PANEL = {
+	name: 'soli/mega-panel',
+	title: 'Mega Panel',
+	parentBlock: 'core/navigation-submenu',
+	className: 'is-soli-mega-panel',
+};
 
 /**
  * Text that WordPress prints when PHP emits a notice, warning or fatal error.
@@ -174,8 +184,7 @@ async function serializeBlock(page, name, attributes = {}) {
 
 module.exports = {
 	BLOCKS,
-	EDITOR_BLOCKS,
-	TOP_LEVEL_BLOCKS,
+	MEGA_PANEL,
 	loginAsAdmin,
 	expectNoPhpErrors,
 	openBlockEditor,

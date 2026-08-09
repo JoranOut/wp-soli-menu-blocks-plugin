@@ -1,4 +1,15 @@
 /**
+ * The mega panel is a variation of core/navigation-submenu, not a block type of
+ * its own. Core already renders the submenu, its label and its inner blocks; all
+ * this file adds is a preset panel layout and the is-soli-mega-panel class that
+ * inc/blocks.php keys the front-end stylesheet off.
+ *
+ * Because there is no block type, `block.json` is never registered server-side
+ * (see soli_menu_blocks_variation_only_dirs() in inc/blocks.php) and this script
+ * is enqueued by hand on enqueue_block_editor_assets.
+ */
+
+/**
  * Lets webpack process CSS, SASS or SCSS files referenced in JavaScript files.
  * All files containing `style` keyword are bundled together. The code used
  * gets applied both to the front of your site and to the editor.

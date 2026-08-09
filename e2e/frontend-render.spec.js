@@ -174,9 +174,18 @@ test.describe('Front-end rendering', () => {
 		await expect(submenu).toHaveCount(1);
 		await expect(submenu).toContainText('Muziek');
 		await expect(submenu).toContainText('Harmonie');
-		await expect(
-			page.locator('link[href*="mega-panel/style-index.css"]')
-		).toHaveCount(1);
+
+		const stylesheet = page.locator('link[href*="mega-panel/style-index.css"]');
+		await expect(stylesheet).toHaveCount(1);
+
+		// The stylesheet must be cache-busted with its own filemtime, a bare unix
+		// timestamp. inc/blocks.php used to hand the stylesheet *URL* to file_exists(),
+		// which can never succeed, so the version came out null and wp_enqueue_style()
+		// emitted no ?ver= at all: a rebuilt panel never reached browsers holding the
+		// old one. Anything other than a timestamp here means that path broke again.
+		const href = await stylesheet.getAttribute('href');
+		const version = new URL(href, page.url()).searchParams.get('ver');
+		expect(version, `expected a filemtime version on ${href}`).toMatch(/^\d+$/);
 
 		expectNoPhpErrors(await page.content(), 'the mega panel page');
 	});
