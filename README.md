@@ -40,9 +40,9 @@ mariadb -U -ppassword wordpress
 
 ## Localhost
 ### Front-end
-[front-end]( http://localhost:8888/)
+[front-end]( http://localhost:8890/)
 ### Back-end
-[back-end]( http://localhost:8888/wp-admin/) \
+[back-end]( http://localhost:8890/wp-admin/) \
 username: admin \
 password: password
 
