@@ -94,7 +94,27 @@ const PLUGIN_DIAGNOSTIC_PATTERN = new RegExp(
  */
 async function expectNoPhpDiagnostics(page) {
 	const url = page.url();
-	const body = await page.locator('body').innerText();
+	// `textContent()`, never `innerText()`. `innerText` returns *rendered* text, so
+	// it skips any subtree the browser is not painting, and a diagnostic printed
+	// inside one would never reach the assertions below -- they would pass while
+	// the page was broken. Measured here by wrapping an injected
+	// `echo $undefined_variable;` in build/menu-link/render.php in a
+	// `display:none` div: `textContent` failed 2 of the 5 tests in
+	// php-errors.spec.js, `innerText` passed all 5.
+	//
+	// `textContent` walks the DOM instead of the layout, so hidden subtrees count.
+	// It also returns `<script>` and `<style>` text; the fatal pattern is broad
+	// enough that inline script could in principle trip it, but the softer
+	// severities require one of this plugin's own filenames on the same line,
+	// which inline script does not produce. No false positive has been observed --
+	// add exclusions against a real one, not speculatively.
+	//
+	// Note this cannot cover the mega panel. Its markup *is* hidden until hover,
+	// but PHP diagnostics raised while rendering inside core/navigation never
+	// reach the response body at all (verified against the raw HTTP body, not just
+	// the DOM), so no reader can see them. That is a gap in this suite, not
+	// something a different read fixes.
+	const body = await page.locator('body').textContent();
 
 	expect(body, `PHP fatal/parse error rendered by ${url}`).not.toMatch(FATAL_ERROR_PATTERN);
 	expect(
