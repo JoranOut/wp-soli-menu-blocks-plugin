@@ -50,6 +50,80 @@ const PHP_ERROR_PATTERNS = [
 ];
 
 /**
+ * Fragments of paths that identify this plugin's own PHP files.
+ *
+ * Used to scope the softer diagnostics (warnings, notices, deprecations) to code
+ * this repository owns, so unrelated WordPress core or theme noise cannot turn
+ * CI red. The list covers every PHP file the plugin ships:
+ *
+ * - `soli-menu-blocks-plugin.php` -- the plugin bootstrap.
+ * - `inc/blocks.php` -- block registration and the mega panel `render_block`
+ *   filter, which runs on every front-end request.
+ * - `build/<block>/render.php` -- the server-rendered block callbacks for
+ *   soli/menu-link and soli/random-descendant-card. WordPress loads these from
+ *   `build/`, not from `src/`, so the built path is what appears in a
+ *   diagnostic; `src/` is matched too for good measure.
+ * - `updater.php` -- WP_GitHub_Updater, loaded on every admin request.
+ */
+const PLUGIN_PHP_FILES =
+	'soli-menu-blocks-plugin\\.php|inc/blocks\\.php|updater\\.php|(?:build|src)/(?:menu-link|random-descendant-card)/render\\.php';
+
+/** Diagnostics that are never acceptable, wherever they come from. */
+const FATAL_ERROR_PATTERN = /Fatal error|Parse error|There has been a critical error on this website/i;
+
+/** Softer diagnostics, but only when they point at this plugin's own files. */
+const PLUGIN_DIAGNOSTIC_PATTERN = new RegExp(
+	'(Warning|Notice|Deprecated):[^\\n]*(' + PLUGIN_PHP_FILES + ')',
+	'i'
+);
+
+/**
+ * Asserts that the currently loaded page contains no PHP diagnostics.
+ *
+ * `WP_DEBUG` and `WP_DEBUG_DISPLAY` are enabled for the wp-env `tests`
+ * environment (see `.wp-env.json` and `debug-mode.spec.js`), so PHP diagnostics
+ * are printed into the rendered document. Anything PHP emits before `<html>` or
+ * inside `<head>` is relocated into the body by the HTML parser, so reading the
+ * body text catches diagnostics from any point in the request.
+ *
+ * Unlike `expectNoPhpErrors()`, which takes raw HTML and matches every severity
+ * unscoped, this reads the rendered text and scopes the softer severities to
+ * this plugin's own files.
+ *
+ * @param {import('@playwright/test').Page} page
+ */
+async function expectNoPhpDiagnostics(page) {
+	const url = page.url();
+	// `textContent()`, never `innerText()`. `innerText` returns *rendered* text, so
+	// it skips any subtree the browser is not painting, and a diagnostic printed
+	// inside one would never reach the assertions below -- they would pass while
+	// the page was broken. Measured here by wrapping an injected
+	// `echo $undefined_variable;` in build/menu-link/render.php in a
+	// `display:none` div: `textContent` failed 2 of the 5 tests in
+	// php-errors.spec.js, `innerText` passed all 5.
+	//
+	// `textContent` walks the DOM instead of the layout, so hidden subtrees count.
+	// It also returns `<script>` and `<style>` text; the fatal pattern is broad
+	// enough that inline script could in principle trip it, but the softer
+	// severities require one of this plugin's own filenames on the same line,
+	// which inline script does not produce. No false positive has been observed --
+	// add exclusions against a real one, not speculatively.
+	//
+	// Note this cannot cover the mega panel. Its markup *is* hidden until hover,
+	// but PHP diagnostics raised while rendering inside core/navigation never
+	// reach the response body at all (verified against the raw HTTP body, not just
+	// the DOM), so no reader can see them. That is a gap in this suite, not
+	// something a different read fixes.
+	const body = await page.locator('body').textContent();
+
+	expect(body, `PHP fatal/parse error rendered by ${url}`).not.toMatch(FATAL_ERROR_PATTERN);
+	expect(
+		body,
+		`PHP warning/notice/deprecation from this plugin rendered by ${url}`
+	).not.toMatch(PLUGIN_DIAGNOSTIC_PATTERN);
+}
+
+/**
  * Logs in to wp-admin as the wp-env administrator.
  *
  * @param {import('@playwright/test').Page} page
@@ -185,8 +259,12 @@ async function serializeBlock(page, name, attributes = {}) {
 module.exports = {
 	BLOCKS,
 	MEGA_PANEL,
+	PLUGIN_PHP_FILES,
+	FATAL_ERROR_PATTERN,
+	PLUGIN_DIAGNOSTIC_PATTERN,
 	loginAsAdmin,
 	expectNoPhpErrors,
+	expectNoPhpDiagnostics,
 	openBlockEditor,
 	createPage,
 	searchInserter,
