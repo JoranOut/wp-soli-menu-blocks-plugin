@@ -34,8 +34,12 @@ add_action('init', function () {
       // releases API and overrides this with the release's zip asset.
       'zip_url' => 'https://github.com/JoranOut/wp-soli-menu-blocks-plugin/releases/latest/download/wp-soli-menu-blocks-plugin.zip', // the zip url of the GitHub repo
       'sslverify' => true, // whether WP should check the validity of the SSL cert when getting an update, see https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/2 and https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/4 for details
-      'requires' => '6.0.0', // which version of WordPress does your plugin require?
-      'tested' => '6.3.1',  // which version of WordPress is your plugin tested up to?
+      // Both ends of the supported range are stamped at packaging time by the
+      // release and nightly workflows, from the same two versions the e2e
+      // matrix runs against. The values checked in here are only what a build
+      // from a working tree would report.
+      'requires' => '6.9', // which version of WordPress does your plugin require?
+      'tested' => '7.0.4',  // which version of WordPress is your plugin tested up to?
       'readme' => 'README.md', // which file to use as the readme for the version number
     );
 
