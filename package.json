@@ -29,6 +29,6 @@
     "@wordpress/env": "^12.1.0",
     "@wordpress/scripts": "^37.0.0",
     "archiver": "^7.0.1",
-    "express": "^4.19.2"
+    "express": "^5.0.0"
   }
 }
