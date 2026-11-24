@@ -74,6 +74,7 @@ archive.glob('**/*', {
         '.gitignore',
         '*.zip',
         'publish.js',
+        'bin/**',
         // Tests and their artifacts are not part of the distributed plugin.
         'e2e/**',
         'playwright.config.js',

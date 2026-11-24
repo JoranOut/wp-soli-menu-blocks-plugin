@@ -6,10 +6,10 @@
   "scripts": {
     "start": "wp-scripts start --blocks-manifest",
     "build": "wp-scripts build --blocks-manifest",
-    "wp-env": "wp-env start --debug",
-    "env:start": "wp-env start",
+    "wp-env": "node bin/wp-env-start.js --debug",
+    "env:start": "node bin/wp-env-start.js",
     "env:stop": "wp-env stop",
-    "env:reset": "wp-env clean all && wp-env start",
+    "env:reset": "wp-env clean all && node bin/wp-env-start.js",
     "test:e2e": "wp-scripts test-playwright",
     "test:e2e:ui": "wp-scripts test-playwright --ui",
     "publish": "npm run build && node ./publish.js"
